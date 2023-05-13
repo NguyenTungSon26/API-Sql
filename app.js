@@ -1,10 +1,11 @@
 const express = require("express");
 const queryController = require("./controller/queryController");
+const queryMiddleWare = require("./middleware/query.middleware");
 const app = express();
 
 // khai báo endpoint GET "/films" để trả về danh sách phim và số lần thuê của chúng
-app.get("/1.1", queryController.query1);
-app.get("/1.2", queryController.query2);
+app.get("/actor/name", queryController.query1, queryMiddleWare);
+app.get("/1.2", queryController.query2, queryMiddleWare);
 app.get("/1.3", queryController.query3);
 app.get("/1.4", queryController.query4);
 app.get("/1.5", queryController.query5);

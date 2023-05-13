@@ -1,33 +1,17 @@
 const connection = require("../model/database");
 
-const query1 = (req, res) => {
+const query1 = (req, res, next) => {
   const sql = `SELECT first_name,last_name 
   FROM actor`;
-
-  // thực hiện truy vấn SQL
-  connection.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error query: " + err);
-      res.status(500).send("Error query database");
-      return;
-    }
-    res.json(results);
-  });
+  req.sql = sql;
+  next();
 };
 
-const query2 = (req, res) => {
+const query2 = (req, res, next) => {
   const sql = `SELECT title, rental_rate, replacement_cost 
   FROM film;`;
-
-  // thực hiện truy vấn SQL
-  connection.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error query: " + err);
-      res.status(500).send("Error query database");
-      return;
-    }
-    res.json(results);
-  });
+  req.sql = sql;
+  next();
 };
 
 const query3 = (req, res) => {
