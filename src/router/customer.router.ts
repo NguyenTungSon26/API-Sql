@@ -5,8 +5,8 @@ const customerRouter = Router();
 // ROUTER
 customerRouter.patch("/upAddressAllCustomers", customer.upAddressAllCustomers);
 customerRouter.patch(
-  "/upEmailsForHorrorRentalsInOct2022",
-  customer.upEmailsForHorrorRentalsInOct2022
+  "/upEmailsForHorrorRentalsInMay2005",
+  customer.upEmailsForHorrorRentalsInMay2005
 );
 
 export default customerRouter;

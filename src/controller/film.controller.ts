@@ -8,7 +8,6 @@ const upFilmRentalRates = async (
   next: NextFunction
 ) => {
   try {
-    // do test postman viết ở body
     const id = req.body.id;
     const film = new Film();
     await film.upFilmRentalRates(Number(id));

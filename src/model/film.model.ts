@@ -20,18 +20,17 @@ export class Film {
   //4.1: Write a SQL query to update the rental rate of all films in the database sakila that have been rented more than 100 times, setting the new rental rate to be 10% higher than the current rate -> Viết truy vấn SQL để cập nhật giá thuê của tất cả các phim trong cơ sở dữ liệu sakila đã được thuê hơn 100 lần,
 
   // UPDATE
-  upFilmRentalRates(rate: number) {
-    console.log(rate);
+  upFilmRentalRates(rentalRate: number) {
     const sql = `UPDATE film 
     SET rental_rate = rental_rate * ?
     WHERE film_id IN (
-      SELECT inventory.film_id 
-      FROM rental
-      JOIN inventory ON rental.inventory_id = inventory.inventory_id
-      GROUP BY inventory.film_id 
+      SELECT i.film_id 
+      FROM rental r
+      JOIN inventory i ON r.inventory_id = i.inventory_id
+      GROUP BY i.film_id 
       HAVING COUNT(*) > 10
     );`;
-    return this.query(sql, [rate]);
+    return this.query(sql, [rentalRate]);
   }
 
   // SELECT
@@ -39,10 +38,10 @@ export class Film {
     const sql = `SELECT film_id, title, rental_rate 
     FROM film 
     WHERE film_id IN (
-      SELECT inventory.film_id 
-      FROM rental
-      JOIN inventory ON rental.inventory_id = inventory.inventory_id
-      GROUP BY inventory.film_id 
+      SELECT i.film_id 
+      FROM rental r
+      JOIN inventory i ON r.inventory_id = i.inventory_id
+      GROUP BY i.film_id 
       HAVING COUNT(*) > 10
     ) 
     ORDER BY film_id;`;
@@ -58,22 +57,22 @@ export class Film {
     UPDATE film
     SET rental_duration = ROUND(rental_duration * ?)
     WHERE film_id IN (
-    SELECT film_id
-    FROM rental
-    GROUP BY film_id
-    HAVING COUNT(rental_id) > 5
+      SELECT film_id
+      FROM rental
+      GROUP BY film_id
+      HAVING COUNT(rental_id) > 5
     );`;
     return this.query(sql, [rentalDuration]);
   }
   getRentalDuration() {
     const sql = `
     SELECT film_id, rental_duration
-FROM film
-WHERE film_id IN
-(SELECT film_id
-FROM rental
-GROUP BY film_id
-HAVING COUNT(rental_id) > 5);`;
+    FROM film
+    WHERE film_id IN
+      (SELECT film_id
+      FROM rental
+      GROUP BY film_id
+      HAVING COUNT(rental_id) > 5);`;
     return this.query(sql);
   }
 
@@ -83,20 +82,20 @@ HAVING COUNT(rental_id) > 5);`;
   upRentalRateOfAllFilmsTheAction(rentalRate: number) {
     const sql = `
     UPDATE film f
-JOIN film_category fc ON f.film_id = fc.film_id
-JOIN category c ON fc.category_id = c.category_id
-SET f.rental_rate = round(f.rental_rate * ?, 2)
-WHERE c.name = 'Action' AND f.release_year < 2007;`;
+    JOIN category c ON fc.category_id = c.category_id
+    JOIN film_category fc ON f.film_id = fc.film_id
+    SET f.rental_rate = round(f.rental_rate * ?, 2)
+    WHERE c.name = 'Action' AND f.release_year < 2007;`;
     return this.query(sql, [rentalRate]);
   }
 
   getRentalRateOfAllFilmsTheAction() {
     const sql = `
     SELECT f.film_id, f.title, f.rental_rate, f.release_year
-FROM film f
-JOIN film_category fc ON f.film_id = fc.film_id
-JOIN category c ON fc.category_id = c.category_id
-WHERE c.name = 'Action' AND f.release_year < 2007;`;
+    FROM film f
+    JOIN film_category fc ON f.film_id = fc.film_id
+    JOIN category c ON fc.category_id = c.category_id
+    WHERE c.name = 'Action' AND f.release_year < 2007;`;
     return this.query(sql);
   }
 
@@ -106,28 +105,28 @@ WHERE c.name = 'Action' AND f.release_year < 2007;`;
   upRentalRateOfAllFilmsRentedByMoreThan10Customers(rentalRate: number) {
     const sql = `
     UPDATE film
-  SET rental_rate = LEAST(rental_rate * ?, 4.00)
-  WHERE film_id IN (
-  SELECT inventory.film_id
-  FROM rental
-  JOIN inventory ON rental.inventory_id = inventory.inventory_id
-  GROUP BY inventory.film_id
-  HAVING COUNT(DISTINCT rental.customer_id) > 10
-  );`;
+    SET rental_rate = LEAST(rental_rate * ?, 4.00)
+    WHERE film_id IN (
+      SELECT inventory.film_id
+      FROM rental
+      JOIN inventory ON rental.inventory_id = inventory.inventory_id
+      GROUP BY inventory.film_id
+      HAVING COUNT(DISTINCT rental.customer_id) > 10
+    );`;
     return this.query(sql, [rentalRate]);
   }
 
   getRentalRateOfAllFilmsRentedByMoreThan10Customers() {
     const sql = `
     SELECT rental_rate
-  FROM film
-  WHERE film_id IN (
-  SELECT inventory.film_id
-  FROM rental
-  JOIN inventory ON rental.inventory_id = inventory.inventory_id
-  GROUP BY inventory.film_id
-  HAVING COUNT(DISTINCT rental.customer_id) > 10
-  );`;
+    FROM film
+    WHERE film_id IN (
+      SELECT inventory.film_id
+      FROM rental
+      JOIN inventory ON rental.inventory_id = inventory.inventory_id
+      GROUP BY inventory.film_id
+      HAVING COUNT(DISTINCT rental.customer_id) > 10
+    );`;
     return this.query(sql);
   }
 
@@ -136,16 +135,16 @@ WHERE c.name = 'Action' AND f.release_year < 2007;`;
   upRentalRatesForPG13MoviesWithLengthOver2Hours(rentalRate: number) {
     const sql = `
     UPDATE film
-SET rental_rate = ?
-WHERE rating = 'PG-13' AND length > 120;`;
+    SET rental_rate = ?
+    WHERE rating = 'PG-13' AND length > 120;`;
     return this.query(sql, [rentalRate]);
   }
 
   getRentalRatesForPG13MoviesWithLengthOver2Hours() {
     const sql = `
     SELECT rental_rate
-from film
-where rating = 'PG-13' AND length >120`;
+    FROM film
+    WHERE rating = 'PG-13' AND length >120`;
     return this.query(sql);
   }
 
@@ -155,26 +154,26 @@ where rating = 'PG-13' AND length >120`;
   upRentalRatesComedyTheYear2006OrLater(rentalRate: number) {
     const sql = `
     UPDATE film
-SET rental_rate = rental_rate * ?
-WHERE film_id IN (
-SELECT fc.film_id
-FROM film_category fc
-JOIN category c ON fc.category_id = c.category_id
-WHERE c.name = 'Comedy'
-) AND release_year >= 2006;`;
+    SET rental_rate = rental_rate * ?
+    WHERE film_id IN (
+      SELECT fc.film_id
+      FROM film_category fc
+      JOIN category c ON fc.category_id = c.category_id
+      WHERE c.name = 'Comedy'
+    ) AND release_year >= 2006;`;
     return this.query(sql, [rentalRate]);
   }
 
   getRentalRatesComedyTheYear2006OrLater() {
     const sql = `
     SELECT film_id, title, release_year, rental_rate
-FROM film
-WHERE film_id IN (
-SELECT fc.film_id
-FROM film_category fc
-JOIN category c ON fc.category_id = c.category_id
-WHERE c.name = 'Comedy'
-) AND release_year >= 2006;`;
+    FROM film
+    WHERE film_id IN (
+      SELECT fc.film_id
+      FROM film_category fc
+      JOIN category c ON fc.category_id = c.category_id
+      WHERE c.name = 'Comedy'
+    ) AND release_year >= 2006;`;
     return this.query(sql);
   }
 
@@ -184,16 +183,16 @@ WHERE c.name = 'Comedy'
   upRentalRateForRatingGFilmLength1Hour(rentalRate: number) {
     const sql = `
   UPDATE film
-SET rental_rate = ?
-WHERE rating = 'G' AND length < 60;`;
+  SET rental_rate = ?
+  WHERE rating = 'G' AND length < 60;`;
     return this.query(sql, [rentalRate]);
   }
 
   getRentalRateForRatingGFilmLength1Hour() {
     const sql = `
   SELECT title, rental_rate
-FROM film
-WHERE rating = 'G' AND length < 60`;
+  FROM film
+  WHERE rating = 'G' AND length < 60`;
     return this.query(sql);
   }
 }

@@ -1,6 +1,6 @@
 node_modules/
 package-lock.json/
-.env/ 
-app.js/ 
-README.md/
+.env/
+app.js/
+README-Query.md/
 lv4.md
