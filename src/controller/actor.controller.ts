@@ -1,15 +1,91 @@
 import { NextFunction, Request, Response } from "express";
 import { Actor } from "../model/actor.model";
 
-const query1 = async (req: Request, res: Response, next: NextFunction) => {
+const getAllActorsName = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const actor = new Actor();
-    const data = await actor.getName();
+    const data = await actor.getAllActorsName();
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500);
   }
 };
+
+const getActorsWithMoreThan20Films = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const actor = new Actor();
+    const data = await actor.getActorsWithMoreThan20Films();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getActorsByCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const actor = new Actor();
+    const data = await actor.getActorsByCategory();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getActorsWithRRatingButNotGRatingMovies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const actor = new Actor();
+    const data = await actor.getActorsWithRRatingButNotGRatingMovies();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getRatedActorsLongerThan2hrsNotInGRatedFilms = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const actor = new Actor();
+    const data = await actor.getRatedActorsLongerThan2hrsNotInGRatedFilms();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+const getActorsInLongPG13AndShortR = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const actor = new Actor();
+    const data = await actor.getActorsInLongPG13AndShortR();
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+// Example
 
 const getNameOneControl = async (
   req: Request,
@@ -42,4 +118,14 @@ const updateNameController = async (
     return res.status(500).json(error);
   }
 };
-export default { query1, getNameOneControl, updateNameController };
+
+export default {
+  getAllActorsName,
+  getActorsWithMoreThan20Films,
+  getActorsByCategory,
+  getActorsWithRRatingButNotGRatingMovies,
+  getRatedActorsLongerThan2hrsNotInGRatedFilms,
+  getActorsInLongPG13AndShortR,
+  getNameOneControl,
+  updateNameController
+};
